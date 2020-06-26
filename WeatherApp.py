@@ -18,6 +18,7 @@ import re
 import pandas as pd
 import os
 import time
+from datetime import datetime
 
 # Chrome driver setting to not show extra chrome window running
 chrome_options = Options()
@@ -43,6 +44,19 @@ def userZip():
 # 2. Current temp, daily high, daily low, weather status (sunny, partly cloudly, rain, etc.)
 # 3. Same for tomorrow (with date)
 # 4. Next 5 days
+
+def timeCheck():
+    """
+    This checks if the current time is before or after 3pm EST. If before it will run the daytime version. If after
+    it will point program to nighttime version.
+    :return: D or N flag
+    """
+    if(datetime.utcnow().hour < 19):
+        check = 'D'
+        return check
+    else:
+        check = 'N'
+        return check
 
 def scraping(zipcode):
     """
@@ -176,10 +190,14 @@ def main():
     pd.set_option('display.max_colwidth', 2000)
 
     zipcode = userZip()
-    weather = scraping(zipcode = zipcode)
-    weather_clean = cleaning(weather = weather)
-    printing(weather_clean = weather_clean)
+    check = timeCheck()
+    if check == 'D':
+
+        weather = scraping(zipcode = zipcode)
+        weather_clean = cleaning(weather = weather)
+        printing(weather_clean = weather_clean)
+
+    else:
+        print('you should probably write the code for the night time one')
 
 main()
-
-
